@@ -1,7 +1,6 @@
 package io.cloudadc.dubbo.sample.consumer;
 
 import org.apache.dubbo.config.annotation.DubboReference;
-import org.apache.dubbo.config.annotation.Method;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.ApplicationRunner;
@@ -25,14 +24,9 @@ public class Application {
 		
 	}
 	
-	@DubboReference(
-			version = "1.0.0",
-            url = "dubbo://127.0.0.1:20880",
-            timeout = 100,
-            methods = {
-            		@Method(name = "getUserAddress", timeout = 300)
-            }
-	)
+	// Direct conenct to provider
+	//@DubboReference(version = "1.0.0", url = "dubbo://127.0.0.1:20880", timeout = 100, methods = { @Method(name = "getUserAddress", timeout = 300)})
+	@DubboReference(version = "${demo.service.version}", loadbalance = "roundrobin")
 	private UserService userService;
 	
 	@Bean

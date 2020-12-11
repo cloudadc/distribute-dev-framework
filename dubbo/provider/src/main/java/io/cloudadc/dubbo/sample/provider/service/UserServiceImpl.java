@@ -10,15 +10,15 @@ import org.slf4j.LoggerFactory;
 import io.cloudadc.dubbo.sample.api.UserAddress;
 import io.cloudadc.dubbo.sample.api.UserService;
 
-@DubboService(version = "1.0.0")
+@DubboService(version = "${demo.service.version}", loadbalance = "roundrobin")
 public class UserServiceImpl implements UserService {
 	
 	Logger logger = LoggerFactory.getLogger(UserServiceImpl.class);
 
 	@Override
 	public List<UserAddress> getUserAddress(Integer userID) {
-		
-		logger.info("getUserAddress be invoked, userID: " + userID);
+				
+		logger.info("getUserAddress be invoked, userID: " + userID );
 		
 		List<UserAddress> list = new ArrayList<>();
 		list.add(new UserAddress(userID, "Beijing, Chaoyang, Building #17", "18611908049"));

@@ -3,7 +3,7 @@
 
 == What's this
 
-image:img/dubble-example.png[]
+image:img/dubble-example-arch-v2.png[]
 
 As above figure, the dubble sample contains 4 components:
 
