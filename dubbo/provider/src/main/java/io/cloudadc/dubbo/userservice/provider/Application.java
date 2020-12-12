@@ -1,4 +1,4 @@
-package io.cloudadc.dubbo.sample.provider;
+package io.cloudadc.dubbo.userservice.provider;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;

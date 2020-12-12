@@ -17,10 +17,10 @@ As above figure, the dubble sample contains 4 components:
 ----
 $ mvn clean install
 ...
-[INFO] User Service Demo Parent ........................... SUCCESS [  0.249 s]
-[INFO] User Service Demo API .............................. SUCCESS [  1.010 s]
-[INFO] User Service Demo Provider ......................... SUCCESS [  0.739 s]
-[INFO] User Service Demo Consumer ......................... SUCCESS [  0.503 s]
+[INFO] Dubbo Parent ....................................... SUCCESS [  0.258 s]
+[INFO] Dubbo User Service API ............................. SUCCESS [  1.055 s]
+[INFO] Dubbo User Service Provider ........................ SUCCESS [  0.752 s]
+[INFO] Dubbo User Service Consumer ........................ SUCCESS [  0.549 s]
 [INFO] ------------------------------------------------------------------------
 [INFO] BUILD SUCCESS
 [INFO] ------------------------------------------------------------------------
@@ -29,6 +29,8 @@ $ mvn clean install
 NOTE: 编译成功后会出现如上 `BUILD SUCCESS` 提示。
 
 == 注册中心
+
+参照 link:https://cloudadc.github.io/zk/[链接] 安装三节点集群 ZooKeeper。如下为但节点安装示意：
 
 [source, bash]
 .*1. 安装 & 启动*
@@ -51,22 +53,24 @@ ZooKeeper CLI version: 3.6.2--803c7f1a12f85978cb049af5e4ef23bd8b688715, built on
 == 服务提供者
 
 [source, bash]
-.*1. 启动*
+.*1. 启动 3 个 Provider 节点以保证高可用（3 个 Provider 在同一台服务器上）*
 ----
-java -jar provider/target/user-service-provider-0.0.1.jar
+java -Ddubbo.registry.address=zookeeper://10.1.10.6:2181,10.1.10.7:2181,10.1.10.8:2181 -Ddubbo.protocol.host=192.168.100.1 -Ddubbo.protocol.port=20880  -jar provider/target/dubbo-user-service-provider-0.0.1.jar
+java -Ddubbo.registry.address=zookeeper://10.1.10.6:2181,10.1.10.7:2181,10.1.10.8:2181 -Ddubbo.protocol.host=192.168.100.1 -Ddubbo.protocol.port=20881  -jar provider/target/dubbo-user-service-provider-0.0.1.jar
+java -Ddubbo.registry.address=zookeeper://10.1.10.6:2181,10.1.10.7:2181,10.1.10.8:2181 -Ddubbo.protocol.host=192.168.100.1 -Ddubbo.protocol.port=20882  -jar provider/target/dubbo-user-service-provider-0.0.1.jar
 ----
 
 [source, bash]
-.*2. 测试*
+.*2. 链接到其中一个Provider 测试*
 ----
-$ telnet 127.0.0.1 20880
+$ telnet 192.168.100.1 20881
 
 dubbo>ls
 PROVIDER:
-io.cloudadc.dubbo.sample.api.UserService
+io.cloudadc.dubbo.userservice.api.UserService:1.0.0
 
-dubbo>invoke io.cloudadc.dubbo.sample.api.UserService.getUserAddress(100)
-Use default service io.cloudadc.dubbo.sample.api.UserService.
+dubbo>invoke io.cloudadc.dubbo.userservice.api.UserService.getUserAddress(100)
+Use default service io.cloudadc.dubbo.userservice.api.UserService.
 result: [{"id":100,"phone":"18611908049","userAddress":"Beijing, Chaoyang, Building #17"},{"id":100,"phone":"18611908049","userAddress":"Beijing, Xicheng, Building #09"}]
 elapsed: 1 ms.
 ----
@@ -76,19 +80,19 @@ elapsed: 1 ms.
 [source, bash]
 .*1. 启动*
 ----
-java -jar consumer/target/user-service-consumer-0.0.1.jar
+java -Ddubbo.registry.address=zookeeper://10.1.10.6:2181,10.1.10.7:2181,10.1.10.8:2181 -jar consumer/target/dubbo-user-service-consumer-0.0.1.jar
 ----
 
 *2. 测试*
 
 Either test via 
-    http://localhost:8090/swagger-ui.html
+    http://localhost:8080/swagger-ui.html
 
 or execute from cli
 
 [source, json]
 ----
-$ curl -X GET "http://localhost:8090/api/initOrder?uid=10101" -H "accept: application/json"
+$ curl -X GET "http://localhost:8080/api/initOrder?uid=10101" -H "accept: application/json"
 {
   "id": "orderID",
   "name": "order",
@@ -105,6 +109,9 @@ $ curl -X GET "http://localhost:8090/api/initOrder?uid=10101" -H "accept: applic
     }
   ]
 }
+
+// To test load balancer
+for i in {1..20} ; do curl -X GET "http://localhost:8080/api/initOrder?uid=10101" -H "accept: application/json" ; echo; done
 ----
 
 

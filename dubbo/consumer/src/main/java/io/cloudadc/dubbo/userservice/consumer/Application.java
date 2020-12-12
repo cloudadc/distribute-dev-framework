@@ -1,4 +1,4 @@
-package io.cloudadc.dubbo.sample.consumer;
+package io.cloudadc.dubbo.userservice.consumer;
 
 import org.apache.dubbo.config.annotation.DubboReference;
 import org.slf4j.Logger;
@@ -8,9 +8,9 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 
-import io.cloudadc.dubbo.sample.api.UserService;
-import io.cloudadc.dubbo.sample.consumer.service.OrderService;
-import io.cloudadc.dubbo.sample.consumer.service.impl.OrderServiceImpl;
+import io.cloudadc.dubbo.userservice.api.UserService;
+import io.cloudadc.dubbo.userservice.consumer.service.OrderService;
+import io.cloudadc.dubbo.userservice.consumer.service.impl.OrderServiceImpl;
 
 @SpringBootApplication
 public class Application {

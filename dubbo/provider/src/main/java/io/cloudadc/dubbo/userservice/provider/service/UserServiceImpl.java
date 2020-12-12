@@ -1,4 +1,4 @@
-package io.cloudadc.dubbo.sample.provider.service;
+package io.cloudadc.dubbo.userservice.provider.service;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -7,8 +7,8 @@ import org.apache.dubbo.config.annotation.DubboService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import io.cloudadc.dubbo.sample.api.UserAddress;
-import io.cloudadc.dubbo.sample.api.UserService;
+import io.cloudadc.dubbo.userservice.api.UserAddress;
+import io.cloudadc.dubbo.userservice.api.UserService;
 
 @DubboService(version = "${demo.service.version}", loadbalance = "roundrobin")
 public class UserServiceImpl implements UserService {

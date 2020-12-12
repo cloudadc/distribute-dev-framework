@@ -1,4 +1,4 @@
-package io.cloudadc.dubbo.sample.consumer.service;
+package io.cloudadc.dubbo.userservice.consumer.service;
 
 
 public interface OrderService {

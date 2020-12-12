@@ -1,9 +1,9 @@
-package io.cloudadc.dubbo.sample.consumer.service;
+package io.cloudadc.dubbo.userservice.consumer.service;
 
 import java.io.Serializable;
 import java.util.List;
 
-import io.cloudadc.dubbo.sample.api.UserAddress;
+import io.cloudadc.dubbo.userservice.api.UserAddress;
 
 public class Order implements Serializable {
 

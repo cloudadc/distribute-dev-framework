@@ -1,10 +1,10 @@
-package io.cloudadc.dubbo.sample.consumer.service.impl;
+package io.cloudadc.dubbo.userservice.consumer.service.impl;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
-import io.cloudadc.dubbo.sample.api.UserService;
-import io.cloudadc.dubbo.sample.consumer.service.Order;
-import io.cloudadc.dubbo.sample.consumer.service.OrderService;
+import io.cloudadc.dubbo.userservice.api.UserService;
+import io.cloudadc.dubbo.userservice.consumer.service.Order;
+import io.cloudadc.dubbo.userservice.consumer.service.OrderService;
 
 public class OrderServiceImpl implements OrderService {
 	

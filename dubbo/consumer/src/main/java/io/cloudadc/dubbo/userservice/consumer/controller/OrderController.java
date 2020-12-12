@@ -1,4 +1,4 @@
-package io.cloudadc.dubbo.sample.consumer.controller;
+package io.cloudadc.dubbo.userservice.consumer.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -6,8 +6,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import io.cloudadc.dubbo.sample.consumer.service.Order;
-import io.cloudadc.dubbo.sample.consumer.service.OrderService;
+import io.cloudadc.dubbo.userservice.consumer.service.Order;
+import io.cloudadc.dubbo.userservice.consumer.service.OrderService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import io.swagger.v3.oas.annotations.Parameter;

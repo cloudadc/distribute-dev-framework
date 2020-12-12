@@ -1,4 +1,4 @@
-package io.cloudadc.dubbo.sample.api;
+package io.cloudadc.dubbo.userservice.api;
 
 import java.util.List;
 

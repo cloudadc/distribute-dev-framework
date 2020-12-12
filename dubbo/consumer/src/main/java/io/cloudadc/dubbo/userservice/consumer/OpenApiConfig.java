@@ -1,4 +1,4 @@
-package io.cloudadc.dubbo.sample.consumer;
+package io.cloudadc.dubbo.userservice.consumer;
 
 import org.springframework.context.annotation.Configuration;
 
