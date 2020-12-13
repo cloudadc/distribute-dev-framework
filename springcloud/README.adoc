@@ -1,0 +1,53 @@
+= SpringCloud
+:toc: manual
+
+== eureka
+
+=== Standalone Mode
+
+
+=== Peer Awareness
+
+[source, yaml]
+.*Standalone Mode*
+----
+java -jar springcloud-eureka-0.0.1.jar
+----
+
+[source, yaml]
+.*Cluster Mode*
+----
+java -Deureka.instance.hostname=eureka01 -Deureka.client.serviceUrl.defaultZone=http://eureka02:8761/eureka,http://eureka03:8761/eureka -jar springcloud-eureka-0.0.1.jar 
+java -Deureka.instance.hostname=eureka02 -Deureka.client.serviceUrl.defaultZone=http://eureka01:8761/eureka,http://eureka03:8761/eureka -jar springcloud-eureka-0.0.1.jar
+java -Deureka.instance.hostname=eureka03 -Deureka.client.serviceUrl.defaultZone=http://eureka01:8761/eureka,http://eureka02:8761/eureka -jar springcloud-eureka-0.0.1.jar
+----
+
+[source, yaml]
+.**
+----
+
+----
+
+[source, yaml]
+.**
+----
+
+----
+
+[source, yaml]
+.**
+----
+
+----
+
+[source, yaml]
+.**
+----
+
+----
+
+[source, yaml]
+.**
+----
+
+---- 
