@@ -50,7 +50,9 @@ $ ./zkCli.sh
 ZooKeeper CLI version: 3.6.2--803c7f1a12f85978cb049af5e4ef23bd8b688715, built on 09/04/2020 12:44 GMT
 ----
 
-== 服务提供者
+== 本地运行
+
+=== 服务提供者
 
 [source, bash]
 .*1. 启动 3 个 Provider 节点以保证高可用（3 个 Provider 在同一台服务器上）*
@@ -61,7 +63,7 @@ java -Ddubbo.registry.address=zookeeper://10.1.10.6:2181,10.1.10.7:2181,10.1.10.
 ----
 
 [source, bash]
-.*2. 链接到其中一个Provider 测试*
+.*2. 连接到其中一个Provider 测试*
 ----
 $ telnet 192.168.100.1 20881
 
@@ -75,7 +77,7 @@ result: [{"id":100,"phone":"18611908049","userAddress":"Beijing, Chaoyang, Build
 elapsed: 1 ms.
 ----
 
-== 服务消费者
+=== 服务消费者
 
 [source, bash]
 .*1. 启动*
@@ -114,6 +116,175 @@ $ curl -X GET "http://localhost:8080/api/initOrder?uid=10101" -H "accept: applic
 for i in {1..20} ; do curl -X GET "http://localhost:8080/api/initOrder?uid=10101" -H "accept: application/json" ; echo; done
 ----
 
+[source, bash]
+.*3. 查看 Consumer 和 Provider 之前的连接(Consumer 和 所有 Provider 建立连接，并维护连接表)*
+----
+$ netstat -anv | grep 3165
+tcp46      0      0  *.8080                 *.*                    LISTEN      131072 131072   3165      0 0x0000 0x00000006
+tcp4       0      0  192.168.100.1.53511    192.168.100.1.20882    ESTABLISHED 407215 146988   3165      0 0x0102 0x00000008
+tcp4       0      0  192.168.100.1.53510    192.168.100.1.20880    ESTABLISHED 406349 146988   3165      0 0x0102 0x00000008
+tcp4       0      0  192.168.100.1.53509    192.168.100.1.20881    ESTABLISHED 406781 146988   3165      0 0x0102 0x00000008
+tcp4       0      0  10.1.10.1.53508        10.1.10.6.2181         ESTABLISHED 131072 131768   3165      0 0x0102 0x00000000
+----
 
+== 容器化运行服务提供者
 
+=== 服务提供者
 
+[source, bash]
+.*1. 构建服务提供者容器镜像*
+----
+cd provider/
+docker build -t dubbo-user-service-provider .
+----
+
+[source, bash]
+.*2. 启动服务提供者*
+----
+docker run -e DUBBO_IP_TO_REGISTRY=192.168.1.6 -e DUBBO_PORT_TO_REGISTRY=20881 -e dubbo.registry.address=zookeeper://10.1.10.6:2181,10.1.10.7:2181,10.1.10.8:2181 -p 192.168.1.6:20881:20880 dubbo-user-service-provider
+----
+
+[source, bash]
+.*3. 连接到其中一个Provider 测试*
+----
+$ telnet 192.168.1.6 20881
+
+dubbo>ls
+PROVIDER:
+io.cloudadc.dubbo.userservice.api.UserService:1.0.0
+
+dubbo>invoke io.cloudadc.dubbo.userservice.api.UserService.getUserAddress(100)
+Use default service io.cloudadc.dubbo.userservice.api.UserService.
+result: [{"id":100,"phone":"18611908049","userAddress":"Beijing, Chaoyang, Building #17"},{"id":100,"phone":"18611908049","userAddress":"Beijing, Xicheng, Building #09"}]
+elapsed: 0 ms.
+----
+
+[source, bash]
+.*4. Push image to a docker registry*
+----
+docker tag dubbo-user-service-provider:latest cloudadc/dubbo-user-service-provider:0.0.1
+docker push cloudadc/dubbo-user-service-provider:0.0.1
+----
+
+=== 服务消费者 
+
+[source, bash]
+.*1. 启动*
+----
+java -Ddubbo.registry.address=zookeeper://10.1.10.6:2181,10.1.10.7:2181,10.1.10.8:2181 -jar consumer/target/dubbo-user-service-consumer-0.0.1.jar
+----
+
+*2. 测试*
+
+Either test via
+    http://localhost:8080/swagger-ui.html
+
+or execute from cli
+
+[source, json]
+----
+$ curl -X GET "http://localhost:8080/api/initOrder?uid=10101" -H "accept: application/json"
+{ 
+  "id": "orderID",
+  "name": "order",
+  "userAddress": [
+    { 
+      "id": 10101,
+      "userAddress": "Beijing, Chaoyang, Building #17",
+      "phone": "18611908049"
+    },
+    {
+      "id": 10101,
+      "userAddress": "Beijing, Xicheng, Building #09",
+      "phone": "18611908049"
+    }
+  ]
+}
+----
+
+[source, bash]
+.*3. 查看 Consumer 和 Provider 之前的连接(Consumer 和 docker 运行的宿主机建立连接)*
+----
+$ netstat -anv | grep 3057
+tcp46      0      0  *.8080                 *.*                    LISTEN      131072 131072   3057      0 0x0000 0x00000006
+tcp4       0      0  192.168.1.6.53248      192.168.1.6.20881      ESTABLISHED 403745 146988   3057      0 0x0102 0x00000008
+tcp4       0      0  10.1.10.1.53247        10.1.10.7.2181         ESTABLISHED 131072 131768   3057      0 0x0102 0x00000000
+----
+
+== K8S 上运行服务提供者
+
+=== 服务提供者
+
+* 下载: link:provider/dubbo-user-service-provider.yaml[dubbo-user-service-provider.yaml]
+
+[source, bash]
+.*1. 部署*
+----
+kubectl apply -f dubbo-user-service-provider.yaml
+----
+
+[source, bash]
+.*2. 连接到其中一个Dubbo Provider VIP 测试*
+----
+$ telnet 192.168.7.56 20880
+Trying 192.168.7.56...
+Connected to 192.168.7.56.
+Escape character is '^]'.
+
+dubbo>ls
+PROVIDER:
+io.cloudadc.dubbo.userservice.api.UserService:1.0.0
+
+dubbo>invoke io.cloudadc.dubbo.userservice.api.UserService.getUserAddress(100)
+Use default service io.cloudadc.dubbo.userservice.api.UserService.
+result: [{"id":100,"phone":"18611908049","userAddress":"Beijing, Chaoyang, Building #17"},{"id":100,"phone":"18611908049","userAddress":"Beijing, Xicheng, Building #09"}]
+elapsed: 2 ms.
+----
+
+=== 服务消费者
+
+[source, bash]
+.*1. 启动*
+----
+java -Ddubbo.registry.address=zookeeper://192.168.7.60:2181 -jar consumer/target/dubbo-user-service-consumer-0.0.1.jar
+----
+
+*2. 测试*
+
+Either test via
+    http://localhost:8080/swagger-ui.html
+
+or execute from cli
+
+[source, json]
+----
+$ curl -X GET "http://localhost:8080/api/initOrder?uid=10101" -H "accept: application/json"
+{
+  "id": "orderID",
+  "name": "order",
+  "userAddress": [
+    {
+      "id": 10101,
+      "userAddress": "Beijing, Chaoyang, Building #17",
+      "phone": "18611908049"
+    },
+    {
+      "id": 10101,
+      "userAddress": "Beijing, Xicheng, Building #09",
+      "phone": "18611908049"
+    }
+  ]
+}
+
+// test loadbalancer
+for i in {1..20} ; do curl -X GET "http://localhost:8080/api/initOrder?uid=10101" -H "accept: application/json" ; echo; done
+----
+
+[source, bash]
+.*3. 查看 Consumer 和 Provider 之前的连接(Consumer 和 F5 VIP 建立连接)*
+----
+$ netstat -anv | grep 2448
+tcp46      0      0  *.8080                 *.*                    LISTEN      131072 131072   2448      0 0x0000 0x00000006
+tcp4       0      0  10.10.0.25.52654       192.168.7.56.20880     ESTABLISHED 131072 131100   2448      0 0x0102 0x00000008
+tcp4       0      0  10.10.0.25.52653       192.168.7.60.2181      ESTABLISHED 131072 131100   2448      0 0x0102 0x00000000
+----

@@ -1,0 +1,6 @@
+= Zookeeper Java Client
+:toc: manual
+
+== What's this
+
+A ZooKeeper Java Client.
