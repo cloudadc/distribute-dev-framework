@@ -30,7 +30,7 @@ NOTE: 编译成功后会出现如上 `BUILD SUCCESS` 提示。
 
 == 注册中心
 
-参照 link:https://cloudadc.github.io/zk/[链接] 安装三节点集群 ZooKeeper。如下为但节点安装示意：
+参照 link:https://cloudadc.github.io/content/zk/[链接] 安装三节点集群 ZooKeeper。如下为但节点安装示意：
 
 [source, bash]
 .*1. 安装 & 启动*
