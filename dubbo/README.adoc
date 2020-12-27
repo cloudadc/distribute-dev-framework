@@ -30,7 +30,7 @@ NOTE: 编译成功后会出现如上 `BUILD SUCCESS` 提示。
 
 == 注册中心
 
-参照 link:https://cloudadc.github.io/zk/[链接] 安装三节点集群 ZooKeeper。如下为但节点安装示意：
+参照 link:https://cloudadc.github.io/content/zk/[链接] 安装三节点集群 ZooKeeper。如下为但节点安装示意：
 
 [source, bash]
 .*1. 安装 & 启动*
@@ -117,7 +117,7 @@ for i in {1..20} ; do curl -X GET "http://localhost:8080/api/initOrder?uid=10101
 ----
 
 [source, bash]
-.*3. 查看 Consumer 和 Provider 之前的连接(Consumer 和 所有 Provider 建立连接，并维护连接表)*
+.*3. 查看 Consumer 和 Provider 之间的连接(Consumer 和 所有 Provider 建立连接，并维护连接表)*
 ----
 $ netstat -anv | grep 3165
 tcp46      0      0  *.8080                 *.*                    LISTEN      131072 131072   3165      0 0x0000 0x00000006
@@ -203,7 +203,7 @@ $ curl -X GET "http://localhost:8080/api/initOrder?uid=10101" -H "accept: applic
 ----
 
 [source, bash]
-.*3. 查看 Consumer 和 Provider 之前的连接(Consumer 和 docker 运行的宿主机建立连接)*
+.*3. 查看 Consumer 和 Provider 之间的连接(Consumer 和 docker 运行的宿主机建立连接)*
 ----
 $ netstat -anv | grep 3057
 tcp46      0      0  *.8080                 *.*                    LISTEN      131072 131072   3057      0 0x0000 0x00000006
@@ -224,7 +224,7 @@ kubectl apply -f dubbo-user-service-provider.yaml
 ----
 
 [source, bash]
-.*2. 连接到其中一个Dubbo Provider VIP 测试*
+.*2. 连接到 F5 上 Dubbo Provider VIP 测试*
 ----
 $ telnet 192.168.7.56 20880
 Trying 192.168.7.56...
@@ -281,7 +281,7 @@ for i in {1..20} ; do curl -X GET "http://localhost:8080/api/initOrder?uid=10101
 ----
 
 [source, bash]
-.*3. 查看 Consumer 和 Provider 之前的连接(Consumer 和 F5 VIP 建立连接)*
+.*3. 查看 Consumer 和 Provider 之间的连接(Consumer 和 F5 VIP 建立连接)*
 ----
 $ netstat -anv | grep 2448
 tcp46      0      0  *.8080                 *.*                    LISTEN      131072 131072   2448      0 0x0000 0x00000006
