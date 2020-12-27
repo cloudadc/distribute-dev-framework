@@ -1,0 +1,60 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  labels:
+    cis_scanner_zone: zone_1
+  name: user-service
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  creationTimestamp: null
+  labels:
+    app: user-service
+  name: user-service
+  namespace: user-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: user-service
+  strategy: {}
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: user-service
+    spec:
+      containers:
+      - image: cloudadc/dubbo-user-service-provider:0.0.1
+        name: dubbo-user-service-provider
+        ports:
+        - containerPort: 20880
+        env:
+        - name: DUBBO_IP_TO_REGISTRY
+          value: "192.168.7.56"
+        - name: DUBBO_PORT_TO_REGISTRY
+          value: "20880"
+        - name: dubbo.registry.address
+          value: "zookeeper://10.1.10.6:2181,10.1.10.7:2181,10.1.10.8:2181"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  creationTimestamp: null
+  labels:
+    app: app
+    cis.f5.com/as3-tenant: "user-service"
+    cis.f5.com/as3-app: "user-service-provider_app"
+    cis.f5.com/as3-pool: "user-service-provider_pool"
+  name: user-service-provider
+  namespace: user-service
+spec:
+  ports:
+  - port: 20880
+    name: dubbo
+    protocol: TCP
+    targetPort: 20880
+  selector:
+    app: user-service
+  type: ClusterIP
