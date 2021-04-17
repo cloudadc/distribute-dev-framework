@@ -1,0 +1,18 @@
+= Quarkus
+
+[source, bash]
+.*1. 构建*
+----
+mvn clean package -Dquarkus.package.type=uber-jar
+----
+
+[source, bash]
+.*2. 运行*
+----
+java -jar target/code-with-quarkus-1.0.0-runner.jar
+----
+
+*3. 访问*
+
+* http://localhost:8080/greeting
+* http://localhost:8080/q/openapi
