@@ -8,13 +8,12 @@ LABEL maintainer "kylinsoong.1214@gmail.com"
 WORKDIR /app
 
 # Copy the runable jar into the container at /app
-ADD target/devops-loan-provider-1.0.jar /app
+ADD target/devops-loan-consumer-1.0.jar /app
 
-# Make port 20880 available to the world outside this container
-EXPOSE 20880
+# Make port 8080 available to the world outside this container
+EXPOSE 8080
 
 ENV DUBBO_REGISTRY_PROXY_ADDRESS="zookeeper"
-ENV MONGODB_SERVER_ADDRESS="mongodb" 
 
 # Run  when the container launches
-CMD ["java", "-jar", "devops-loan-provider-1.0.jar"]
+CMD ["java", "-jar", "devops-loan-consumer-1.0.jar"]

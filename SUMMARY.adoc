@@ -1,6 +1,7 @@
 = 目录
 
 . link:README.adoc[INTRODUCTION]
+. link:devops-demo/README.adoc[DEVOPS DEMO]
 . link:zookeeper/README.adoc[ZOOKEEPER]
 . link:dubbo/README.adoc[DUBBO]
 . link:springcloud/README.adoc[SPRINGCLOUD]
