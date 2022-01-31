@@ -143,8 +143,34 @@ f81aa0842734   mongo:5.0.5                  "docker-entrypoint.s…"   17 minute
 == Deploy to K8S
 
 [source, bash]
-.**
+.*Deploy*
+----
+kubectl apply -f loan.yaml
 ----
 
+[source, bash]
+.*View the Deploment*
+----
+# kubectl get pods -n zookeeper --no-headers -o wide
+zookeeper-598ffbcc8c-58rxv   1/1   Running   0     48m   10.244.1.128   node3
+
+# kubectl get pods -n loan-db --no-headers -o wide
+mongodb-6b95f4f959-4zvm6   1/1   Running   0     42m   10.244.1.129   node3
+
+# kubectl get pods -n loan-provider --no-headers -o wide
+provider-b75c56b9b-hb8rl   1/1   Running   0     11m   10.244.2.184   node2 
+provider-b75c56b9b-qq5mx   1/1   Running   0     11m   10.244.1.134   node3
+
+# kubectl get pods -n loan-consumer --no-headers -o wide
+consumer-5d4b5b76fb-4clc2   1/1   Running   0     11m   10.244.2.185   node2 
+consumer-5d4b5b76fb-ztgxx   1/1   Running   0     12m   10.244.1.135   node3
+
+# kubectl get nodes -o wide --no-headers
+master   Ready   master   130d   v1.18.17   192.168.200.205   <none>   CentOS Linux 7 (Core)   3.10.0-1062.el7.x86_64   docker://18.9.7
+node2    Ready   <none>   130d   v1.18.17   192.168.200.207   <none>   CentOS Linux 7 (Core)   3.10.0-1062.el7.x86_64   docker://18.9.7
+node3    Ready   <none>   46d    v1.18.17   192.168.200.212   <none>   CentOS Linux 7 (Core)   3.10.0-1062.el7.x86_64   docker://18.9.7
 ----
 
+Once all 4 microservice started, access http://192.168.200.205:30036/swagger-ui.html will go into swagger UI page.
+
+image:img/openapi.png[]
